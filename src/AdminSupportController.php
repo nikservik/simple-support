@@ -110,7 +110,7 @@ class AdminSupportController extends Controller
 
         if (! array_key_exists('unread', $stats)) 
             $stats['unread'] = User::whereHas('support_messages', function ($query) {
-                $query->whereNull('read_at');
+                $query->where('type', 'userMessage')->whereNull('read_at');
             })->count();
 
         return $stats;

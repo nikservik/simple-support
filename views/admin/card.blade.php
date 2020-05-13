@@ -12,11 +12,12 @@
             </div>
             <div class="">
                 <a href="/support/dialog/{{ $dialog->id }}#read">{{ $dialog->name }}</a>
-                <span class="text-gray-500 text-sm">
+                <span class="text-sm">{{ $dialog->email }}</span>
+                <div class="text-gray-500 text-sm mt-1">
                     {{ $dialog->support_messages[0]->created_at->addHours(3)->format('d.m.Y H:i') }}
                     @lang('simplesupport::admin.moscowTime')
-                </span>
-                <div class="text-sm mt-2 hover:no-underline">
+                </div>
+                <div class="text-sm mt-1 hover:no-underline">
                     @if($dialog->message)
                         {!! $dialog->message !!}
                     @else 
