@@ -16,4 +16,5 @@ return [
     'later' => 'Позже',
     'moscowTime' => '(мск)',
     'confirmDelete' => 'Удалить сообщение?',
+    'placeholder' => 'Поиск по сообщениям',
 ];
