@@ -47,6 +47,8 @@ class AdminSupportController extends Controller
             ->withCount(['support_messages as unread' => function ($query) {
                 $query->where('type', 'userMessage')->whereNull('read_at');
             }]) 
+            ->orderByDesc(SupportMessage::select('created_at') 
+                ->whereColumn('user_id', 'users.id')->orderBy('created_at', 'desc')->limit(1))
             ->paginate(20);
 
     	return view('simplesupport::admin.index', [
