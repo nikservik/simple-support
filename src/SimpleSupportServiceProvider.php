@@ -14,6 +14,7 @@ class SimpleSupportServiceProvider extends AuthServiceProvider
 
     public function register()
     {
+        $this->mergeConfigFrom(__DIR__.'/../config/simple-support.php', 'simple-support');
     }
 
     public function boot()
@@ -23,6 +24,9 @@ class SimpleSupportServiceProvider extends AuthServiceProvider
         $this->loadViewsFrom(__DIR__.'/../views', 'simplesupport');
         $this->loadRoutesFrom(__DIR__.'/../routes.php');
         $this->registerPolicies();
+        $this->publishes([
+            __DIR__.'/../config/simple-support.php' => config_path('simple-support.php')
+        ], 'config');
         $this->publishes([
             __DIR__.'/../migrations/' => database_path('migrations')
         ], 'migrations');

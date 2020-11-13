@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Nikservik\SimpleSupport\Models\SupportMessage;
+use Nikservik\SimpleSupport\NotifyTelegramJob;
 use Nikservik\SimpleSupport\Requests\StoreSupportMessage;
 
 class SupportController extends Controller
@@ -51,6 +52,8 @@ class SupportController extends Controller
             'type' => 'userMessage'
         ]);
         Auth::user()->support_messages()->save($message);
+
+        NotifyTelegramJob::dispatch($message);
 
         return $this->index();
     }
