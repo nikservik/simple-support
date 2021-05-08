@@ -1,0 +1,242 @@
+openapi: 3.0.0
+info:
+  title: API-simple-support.v1
+  version: '1.0'
+  contact:
+    name: Сергей Никифоров
+    email: ser.nikiforov@gmail.com
+  description: Пользовательский API для службы заботы
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /support:
+    get:
+      summary: Список сообщений
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    default: 200
+                    minimum: 200
+                    maximum: 200
+                  data:
+                    $ref: '#/components/schemas/Message'
+                  unread:
+                    type: integer
+                    minimum: 0
+        '401':
+          $ref: '#/components/responses/401'
+      operationId: get-support
+      parameters:
+        - schema:
+            type: string
+            format: date-time
+          in: query
+          name: before
+          description: 'Сообщения, созданные раньше заданного времени'
+      description: |-
+        Возвращает сообщения из диалога со службой поддержки.
+        Количество сообщений ограничивается лимитом на сервере.
+        Чтобы загрузить более ранние сообщения, нужно указать необязательный параметр before. Тогда сервер вернет список сообщений, которые созданы раньше заданного времени. Тоже с ограничением по количеству. 
+    post:
+      summary: Отправить сообщение
+      operationId: post-support
+      responses:
+        '201':
+          $ref: '#/components/responses/201'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+      description: Принимает сообщение от пользователя
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      parameters:
+        - schema:
+            type: integer
+            minimum: 1
+          in: query
+          name: reply_id
+          description: 'Сообщение, на которое отвечают'
+  '/support/{message}':
+    parameters:
+      - schema:
+          type: integer
+        name: message
+        in: path
+        required: true
+        description: Message Id
+    patch:
+      summary: Изменить сообщение
+      operationId: patch-support-message
+      responses:
+        '202':
+          $ref: '#/components/responses/202'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+      description: Исправляет уже отправленное сообщение
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+    delete:
+      summary: Удалить сообщение
+      operationId: delete-support-message
+      responses:
+        '202':
+          $ref: '#/components/responses/202'
+        '401':
+          $ref: '#/components/responses/401'
+      description: Удаляет отправленное сообщение
+  /support/unread:
+    get:
+      summary: Количество непрочитанных сообщений
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    default: 200
+                    minimum: 200
+                    maximum: 200
+                  data:
+                    type: integer
+                    minimum: 0
+                    example: 1
+        '401':
+          $ref: '#/components/responses/401'
+      operationId: get-support-unread
+      description: Возвращает количество непрочитанных пользователем сообщений
+components:
+  schemas:
+    Message:
+      title: Message
+      type: object
+      properties:
+        id:
+          type: integer
+          minimum: 1
+          example: 1
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        message:
+          type: string
+          example: Some text
+        user_id:
+          type: integer
+          minimum: 1
+          example: 1
+          readOnly: true
+        type:
+          type: string
+          example: userMessage
+          enum:
+            - userMessage
+            - supportMessage
+        read_at:
+          type: string
+          format: date-time
+      x-examples:
+        example:
+          id: 1
+          created_at: '2019-08-24T14:15:22Z'
+          updated_at: '2019-08-24T14:15:22Z'
+          message: Some text
+          user_id: 1
+          type: userMessage
+          read_at: '2019-08-24T14:15:22Z'
+  securitySchemes:
+    Sanctum token:
+      type: http
+      scheme: bearer
+  responses:
+    '201':
+      description: Created
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                default: 201
+                minimum: 201
+                maximum: 201
+              message:
+                type: string
+    '202':
+      description: Accepted
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                default: 202
+                minimum: 202
+                maximum: 202
+              message:
+                type: string
+                example: Success
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                default: 401
+                minimum: 401
+                maximum: 401
+              message:
+                type: string
+                example: Unauthorized
+    '422':
+      description: Validation failed
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                default: 422
+                maximum: 422
+                minimum: 422
+              errors:
+                type: object
+                properties:
+                  message:
+                    type: object
+                    properties:
+                      required:
+                        type: string
+                        example: message_required
+security:
+  - Sanctum token: []
