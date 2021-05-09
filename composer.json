@@ -27,13 +27,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Nikservik\\SimpleSupport\\": "src"
+            "Nikservik\\SimpleSupport\\": "src",
+            "Nikservik\\SimpleSupport\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Nikservik\\SimpleSupport\\Tests\\": "tests",
-            "Nikservik\\SimpleSupport\\Database\\Factories\\": "database/factories"
+            "Nikservik\\SimpleSupport\\Tests\\": "tests"
         }
     },
     "scripts": {
