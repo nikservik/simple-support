@@ -64,13 +64,9 @@ class GetSupportMessages
 
     public function jsonResponse($messages, Request $request): JsonResponse
     {
-        $countUnread = Config::get('simple-support.unread-count') == 'fast'
-            ? 'countUnreadFast'
-            : 'countUnread';
-
         return response()->json([
             'status' => 200,
-            'unread' => Auth::user()->$countUnread,
+            'unread' => Auth::user()->countUnread,
             'data' => $messages,
         ]);
     }

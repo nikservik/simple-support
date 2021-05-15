@@ -87,6 +87,9 @@ SUPPORT_BOT_CHAT=
 ```
 
 ## История изменений
+### 2.02
+- оптимизация countUnread
+
 ### 2.01
 - В Actions вынесен метод jsonResponse
 - asController возвращает значение, которое можно использовать во view

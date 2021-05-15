@@ -26,11 +26,7 @@ class GetUnreadSupportMessages
 
     public function handle(User $user): int
     {
-        $countUnread = Config::get('simple-support.unread-count') == 'fast'
-            ? 'countUnreadFast'
-            : 'countUnread';
-
-        return $user->$countUnread;
+        return $user->countUnread;
     }
 
     public function asController(): int
