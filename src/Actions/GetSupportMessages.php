@@ -31,17 +31,7 @@ class GetSupportMessages
 
     public function handle(User $user, Carbon $before = null): Collection
     {
-        $messages = SupportMessage::where(function ($query) use ($user) {
-            $query->where('user_id', $user->id)
-                    ->orWhere(
-                        fn ($query) =>
-                        $query->whereNull('user_id')
-                            ->where('type', 'notification')
-                    );
-        })
-            ->where('type', '<>', 'notificationRead')
-            ->limit(Config::get('simple-support.messages-per-page'), 10)
-            ->orderBy('created_at', 'DESC');
+        $messages = $this->messagesBuilder($user);
 
         if ($before) {
             $messages->where('created_at', '<', $before);
@@ -89,5 +79,20 @@ class GetSupportMessages
                 ]);
             }
         });
+    }
+
+    protected function messagesBuilder(User $user): Builder
+    {
+        return SupportMessage::where(function ($query) use ($user) {
+            $query->where('user_id', $user->id)
+                    ->orWhere(
+                        fn ($query) =>
+                        $query->whereNull('user_id')
+                            ->where('type', 'notification')
+                    );
+        })
+            ->where('type', '<>', 'notificationRead')
+            ->limit(Config::get('simple-support.messages-per-page'), 10)
+            ->orderBy('created_at', 'DESC');
     }
 }
