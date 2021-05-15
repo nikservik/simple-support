@@ -5,6 +5,7 @@ namespace Nikservik\SimpleSupport\Actions;
 
 use Illuminate\Auth\Access\Response;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use Lorisleiva\Actions\ActionRequest;
@@ -34,7 +35,10 @@ class UpdateSupportMessage
     public function asController(ActionRequest $request, int $message)
     {
         $this->handle($request->user(), $message, $request->get('message'));
+    }
 
+    public function jsonResponse(): JsonResponse
+    {
         return response()->json([
             'status' => 202,
             'message' => 'Accepted',

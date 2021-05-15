@@ -4,7 +4,7 @@
 namespace Nikservik\SimpleSupport\Actions;
 
 use Illuminate\Foundation\Auth\User;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
@@ -33,13 +33,16 @@ class GetUnreadSupportMessages
         return $user->$countUnread;
     }
 
-    public function asController(Request $request)
+    public function asController(): int
     {
-        $user = Auth::user();
+        return $this->handle(Auth::user());
+    }
 
+    public function jsonResponse(int $count): JsonResponse
+    {
         return response()->json([
             'status' => 200,
-            'data' => $this->handle($user),
+            'data' => $count,
         ]);
     }
 }

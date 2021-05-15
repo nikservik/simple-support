@@ -5,6 +5,7 @@ namespace Nikservik\SimpleSupport\Actions;
 
 use Illuminate\Auth\Access\Response;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
@@ -36,7 +37,10 @@ class DeleteSupportMessage
         $user = Auth::user();
 
         $this->handle($user, $message);
+    }
 
+    public function jsonResponse(): JsonResponse
+    {
         return response()->json([
             'status' => 202,
             'message' => 'Accepted',

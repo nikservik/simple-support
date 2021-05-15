@@ -5,6 +5,7 @@ namespace Nikservik\SimpleSupport\Actions;
 
 use Illuminate\Auth\Access\Response;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
@@ -44,7 +45,10 @@ class PostMessageFromUser
         $message = $this->handle($user, $request->get('message'), $request->get('reply_to'));
 
         NotifyTelegram::dispatch($message);
+    }
 
+    public function jsonResponse(): JsonResponse
+    {
         return response()->json([
             'status' => 201,
             'message' => 'Created',

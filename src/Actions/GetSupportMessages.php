@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
@@ -14,7 +15,6 @@ use Illuminate\Support\Facades\Route;
 use Lorisleiva\Actions\Concerns\AsController;
 use Lorisleiva\Actions\Concerns\AsObject;
 use Nikservik\SimpleSupport\Models\SupportMessage;
-use Nikservik\SimpleSupport\Models\SupportMessageResource;
 
 class GetSupportMessages
 {
@@ -59,17 +59,20 @@ class GetSupportMessages
             ? Carbon::parse($request->get('before'))
             : null;
 
+        return $this->handle($user, $before);
+    }
+
+    public function jsonResponse($messages, Request $request): JsonResponse
+    {
         $countUnread = Config::get('simple-support.unread-count') == 'fast'
             ? 'countUnreadFast'
             : 'countUnread';
 
-        return SupportMessageResource::collection(
-            $this->handle($user, $before)
-        )
-            ->additional([
-                'status' => 200,
-                'unread' => $user->$countUnread,
-            ]);
+        return response()->json([
+            'status' => 200,
+            'unread' => Auth::user()->$countUnread,
+            'data' => $messages,
+        ]);
     }
 
     protected function markAsRead(Builder $messages, User $user): void

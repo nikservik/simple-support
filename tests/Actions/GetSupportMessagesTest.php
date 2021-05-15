@@ -62,7 +62,7 @@ class GetSupportMessagesTest extends TestCase
         SupportMessage::factory()->count(5)->for($user)->create();
 
         $this->actingAs($user)
-            ->get('/support?before=' . Carbon::now()->subDay())
+            ->getJson('/support?before=' . urlencode(Carbon::now()->subDay()))
             ->assertJsonCount(3, 'data');
     }
 
@@ -72,7 +72,7 @@ class GetSupportMessagesTest extends TestCase
         Config::set('simple-support.messages-per-page', 5);
 
         $this->actingAs($user)
-            ->get('/support')
+            ->getJson('/support')
             ->assertJsonCount(5, 'data');
     }
 
@@ -84,7 +84,7 @@ class GetSupportMessagesTest extends TestCase
         Config::set('simple-support.messages-per-page', 5);
 
         $this->actingAs($user)
-            ->get('/support')
+            ->getJson('/support')
             ->assertJsonCount(5, 'data')
             ->assertJsonPath('data.0.type', 'supportMessage');
     }
@@ -107,7 +107,7 @@ class GetSupportMessagesTest extends TestCase
         SupportMessage::factory()->count(3)->for($user)->fromUser()->create();
         SupportMessage::factory()->count(2)->for($user)->fromSupport()->create();
 
-        $response = $this->actingAs($user)->get('/support');
+        $response = $this->actingAs($user)->getJson('/support');
 
         $this->assertNull($response['data']['0']['read_at']);
         $this->assertNotNull($response['data']['4']['read_at']);
@@ -121,7 +121,7 @@ class GetSupportMessagesTest extends TestCase
         Config::set('simple-support.messages-per-page', 5);
 
         $this->actingAs($user)
-            ->get('/support')
+            ->getJson('/support')
             ->assertJsonPath('unread', 5);
     }
 
@@ -132,7 +132,7 @@ class GetSupportMessagesTest extends TestCase
         )->create();
 
         $this->actingAs($user)
-            ->get('/support')
+            ->getJson('/support')
             ->assertJsonPath('unread', 0)
             ->assertJsonPath('data.0.read_at', null);
     }
@@ -143,7 +143,7 @@ class GetSupportMessagesTest extends TestCase
         SupportMessage::factory()->count(2)->notification()->create();
 
         $this->actingAs($user)
-            ->get('/support')
+            ->getJson('/support')
             ->assertJsonCount(7, 'data');
     }
 
@@ -154,7 +154,7 @@ class GetSupportMessagesTest extends TestCase
         SupportMessage::factory()->notificationRead($notification)->for($user)->create();
 
         $this->actingAs($user)
-            ->get('/support')
+            ->getJson('/support')
             ->assertJsonCount(6, 'data');
     }
 
@@ -164,7 +164,7 @@ class GetSupportMessagesTest extends TestCase
         SupportMessage::factory()->count(2)->notification()->create();
 
         $this->actingAs($user)
-            ->get('/support')
+            ->getJson('/support')
             ->assertJsonPath('unread', 0);
     }
 
@@ -174,11 +174,11 @@ class GetSupportMessagesTest extends TestCase
         SupportMessage::factory()->count(2)->notification()->create();
 
         $this->actingAs($user)
-            ->get('/support')
+            ->getJson('/support')
             ->assertJsonPath('unread', 0);
 
         $this->actingAs($user)
-            ->get('/support')
+            ->getJson('/support')
             ->assertJsonPath('unread', 0);
     }
 
@@ -191,7 +191,7 @@ class GetSupportMessagesTest extends TestCase
         Config::set('simple-support.messages-per-page', 5);
 
         $this->actingAs($user)
-            ->get('/support')
+            ->getJson('/support')
             ->assertJsonPath('unread', 2);
     }
 
@@ -202,7 +202,7 @@ class GetSupportMessagesTest extends TestCase
         SupportMessage::factory()->count(2)->notification()->create();
 
         $this->actingAs($user)
-            ->get('/support?before=' . Carbon::now()->subDay())
+            ->getJson('/support?before=' . Carbon::now()->subDay())
             ->assertJsonPath('unread', 2);
     }
 }
