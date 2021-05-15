@@ -2,6 +2,7 @@
 
 namespace Nikservik\SimpleSupport;
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 
 class SimpleSupportServiceProvider extends ServiceProvider
@@ -13,8 +14,12 @@ class SimpleSupportServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->loadMigrationsFrom(__DIR__.'/../migrations');
-        $this->loadRoutesFrom(__DIR__.'/../routes.php');
+        $this->loadMigrations();
+        $this->registerRoutes();
+
+        if (! $this->app->runningInConsole()) {
+            return;
+        }
 
         $this->publishes([
             __DIR__.'/../config/simple-support.php' => config_path('simple-support.php'),
@@ -22,5 +27,19 @@ class SimpleSupportServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../migrations/' => database_path('migrations'),
         ], 'simple-support-migrations');
+    }
+
+    protected function loadMigrations(): void
+    {
+        if (in_array('autoload-migrations', Config::get('simple-support.features'))) {
+            $this->loadMigrationsFrom(__DIR__.'/../migrations');
+        }
+    }
+
+    protected function registerRoutes(): void
+    {
+        if (in_array('register-api-routes', Config::get('simple-support.features'))) {
+            $this->loadRoutesFrom(__DIR__.'/../routes.php');
+        }
     }
 }

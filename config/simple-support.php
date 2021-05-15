@@ -7,6 +7,8 @@ return [
         'user-can-update-message',
         'user-can-delete-message',
         'send-notifications-to-telegram',
+        'register-api-routes',
+        'autoload-migrations',
     ],
 
     // без / в начале и в конце
