@@ -30,8 +30,13 @@ composer update
 ```
 ### Миграции
 
-Миграции можно не публиковать, пакет их загружает автоматически. 
-Достаточно выполнить миграции:
+Миграции можно опубликовать 
+```bash
+php artisan vendor:publish --tag="simple-support-migrations"
+```
+Или раскомментировать фичу `autoload-migrations` в конфигурации. 
+
+Выполнить миграции:
 ```bash
 php artisan migrate
 ```
@@ -51,6 +56,8 @@ php artisan vendor:publish --tag="simple-support-config"
         'user-can-update-message',
         'user-can-delete-message',
         'send-notifications-to-telegram',
+//        'register-api-routes',
+//        'autoload-migrations',
     ],
 
     // без / в начале и в конце
