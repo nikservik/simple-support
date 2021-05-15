@@ -13,15 +13,18 @@ class CreateSupportMessagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('support_messages', function (Blueprint $table) {
-            $table->increments('id');
-            $table->timestamps();
-            $table->text('message');
-            $table->integer('user_id')->unsigned();
-            $table->string('type');
-            $table->string('status')->nullable();
-            $table->datetime('read_at')->nullable();
-        });
+        if (! Schema::hasTable('support_messages')) {
+            Schema::create('support_messages', function (Blueprint $table) {
+                $table->increments('id');
+                $table->timestamps();
+                $table->text('message');
+                $table->integer('user_id')->unsigned();
+                $table->integer('support_dialog_id')->unsigned();
+                $table->string('type');
+                $table->string('status')->nullable();
+                $table->datetime('read_at')->nullable();
+            });
+        }
     }
 
     /**

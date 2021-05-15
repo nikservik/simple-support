@@ -17,6 +17,7 @@ class SupportMessagesMakeUserIdNullable extends Migration
             $table->integer('user_id')->unsigned()->nullable()->change();
             $table->integer('reply_to')->unsigned()->nullable();
             $table->dropColumn('status');
+            $table->dropColumn('support_dialog_id');
         });
     }
 

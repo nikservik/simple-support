@@ -32,7 +32,15 @@ class TestCase extends Orchestra
     public function getEnvironmentSetUp($app)
     {
         $app['config']->set('database.default', 'mysql');
-        config()->set('app.fallback_locale', 'ru');
+        $app['config']->set('app.fallback_locale', 'ru');
+        $app['config']->set('simple-support.features', [
+            'user-can-send-message',
+            'user-can-update-message',
+            'user-can-delete-message',
+            'send-notifications-to-telegram',
+            'register-api-routes',
+            'autoload-migrations',
+        ]);
     }
 
     protected function defineDatabaseMigrations()

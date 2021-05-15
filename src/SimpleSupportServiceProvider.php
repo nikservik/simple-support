@@ -25,14 +25,14 @@ class SimpleSupportServiceProvider extends ServiceProvider
             __DIR__.'/../config/simple-support.php' => config_path('simple-support.php'),
         ], 'simple-support-config');
         $this->publishes([
-            __DIR__.'/../migrations/' => database_path('migrations'),
+            __DIR__.'/../database/migrations/' => database_path('migrations'),
         ], 'simple-support-migrations');
     }
 
     protected function loadMigrations(): void
     {
         if (in_array('autoload-migrations', Config::get('simple-support.features'))) {
-            $this->loadMigrationsFrom(__DIR__.'/../migrations');
+            $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         }
     }
 
