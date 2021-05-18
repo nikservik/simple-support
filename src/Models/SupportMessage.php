@@ -33,9 +33,9 @@ class SupportMessage extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function readMark(): Relation
+    public function readMarks(): Relation
     {
-        return $this->hasOne(SupportMessage::class, 'message', 'id');
+        return $this->hasMany(SupportMessage::class, 'message', 'id');
     }
 
     public function replyTo(): Relation

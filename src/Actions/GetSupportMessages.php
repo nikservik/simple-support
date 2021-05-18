@@ -68,9 +68,15 @@ class GetSupportMessages
             ->whereNull('read_at')
             ->update(['read_at' => Carbon::now()]);
 
-        $notifications = (clone $messages)->with('readMark')->where('type', 'notification')->get();
+        $notifications = (clone $messages)
+            ->with(['readMarks' => function($query) use ($user) {
+                $query->where('user_id', $user->id);
+            }])
+            ->where('type', 'notification')
+            ->get();
+
         $notifications->each(function ($notification) use ($user) {
-            if (! $notification->readMark) {
+            if ($notification->readMarks->count() == 0) {
                 SupportMessage::create([
                     'message' => $notification->id,
                     'type' => 'notificationRead',

@@ -14,7 +14,8 @@ class SupportMessageTest extends TestCase
         $notification = SupportMessage::factory()->notification()->create();
         SupportMessage::factory()->notificationRead($notification)->for($user)->create();
 
-        $this->assertInstanceOf(SupportMessage::class, $notification->readMark);
+        $this->assertCount(1, $notification->readMarks);
+        $this->assertInstanceOf(SupportMessage::class, $notification->readMarks()->first());
     }
 
     public function testReadMarkForSupportMessage()
@@ -22,7 +23,7 @@ class SupportMessageTest extends TestCase
         $user = User::factory()->create();
         $message = SupportMessage::factory()->for($user)->fromSupport()->create();
 
-        $this->assertNull($message->readMark);
+        $this->assertCount(0, $message->readMarks);
     }
 
     public function testReplyTo()
