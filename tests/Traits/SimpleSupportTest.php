@@ -23,6 +23,23 @@ class SimpleSupportTest extends TestCase
         $this->assertCount(3, $user->supportMessages);
     }
 
+    public function testSupportMessagesWithoutNotifications()
+    {
+        $user = User::factory()->hasSupportMessages(3)->create();
+        SupportMessage::factory()->notification()->create();
+
+        $this->assertCount(3, $user->supportMessages);
+    }
+
+    public function testSupportMessagesWithoutNotificationReadMarks()
+    {
+        $user = User::factory()->hasSupportMessages(3)->create();
+        $notification = SupportMessage::factory()->notification()->create();
+        SupportMessage::factory()->notificationRead($notification)->for($user)->create();
+
+        $this->assertCount(3, $user->supportMessages);
+    }
+
     public function testCountUnreadEmpty()
     {
         Config::set('simple-support.unread-count', 'simple');
@@ -39,6 +56,16 @@ class SimpleSupportTest extends TestCase
         )->create();
 
         $this->assertEquals(3, $user->countUnread);
+    }
+
+    public function testCountUnreadDontCountOwnMessages()
+    {
+        Config::set('simple-support.unread-count', 'simple');
+        $user = User::factory()->has(
+            SupportMessage::factory()->count(3)->fromUser()
+        )->create();
+
+        $this->assertEquals(0, $user->countUnread);
     }
 
     public function testCountUnreadNotifications()

@@ -13,8 +13,9 @@ trait SimpleSupport
 
     public function supportMessages(): Relation
     {
-        return $this->hasMany(SupportMessage::class);
-    }
+        return $this->hasMany(SupportMessage::class)
+            ->where('type', '<>', 'notificationRead');
+        }
 
     public function getCountUnreadAttribute(): int
     {
@@ -33,8 +34,8 @@ trait SimpleSupport
 
     protected function countUnreadSimple(): int
     {
-        $unreadMessages = $this->supportMessages()->whereNull('read_at')->where('support_messages.type', 'supportMessage')->count();
-        $readNotifications = $this->supportMessages()->whereNotNull('read_at')->where('support_messages.type', 'notificationRead')->count();
+        $unreadMessages = $this->supportMessages()->whereNull('support_messages.read_at')->where('support_messages.type', 'supportMessage')->count();
+        $readNotifications = SupportMessage::where('user_id', $this->id)->whereNotNull('read_at')->where('type', 'notificationRead')->count();
         $notifications = SupportMessage::where('type', 'notification')->count();
 
         return $unreadMessages + $notifications - $readNotifications;
