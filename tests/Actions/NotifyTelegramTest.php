@@ -71,7 +71,7 @@ class NotifyTelegramTest extends TestCase
     public function testReceivedError()
     {
         $this->fakeHttpError();
-        Log::shouldReceive('error')->once();
+        Log::shouldReceive('error')->times(2);
         $user = User::factory()->create();
         $message = SupportMessage::factory()->fromUser()->for($user)->create();
 
