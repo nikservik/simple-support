@@ -26,17 +26,20 @@ class NotifyTelegram
             return;
         }
 
+        $message = "\\-\\-\n*Сообщение в " . $this->prepareMessage(__('app.name')) . "*\n\n"
+                    . "_" . $this->prepareMessage($message->user->name) . " пишет_\n\n"
+                    . $this->prepareMessage($message->message) ."\n\n"
+                    . '[Перейти к диалогу](' . config('app.url') . '/support/dialog/' . $message->user->id . '#read)';
+
         $response = Http::post(Config::get('simple-support.telegram.url').Config::get('simple-support.telegram.token').'/sendMessage', [
                 'chat_id' => Config::get('simple-support.telegram.chat'),
                 'parse_mode' => 'MarkdownV2',
-                'text' => "\\-\\-\n*Сообщение в " . __('app.name') . "*\n\n"
-                    . "_" . $this->prepareMessage($message->user->name) . " пишет_\n\n"
-                    . $this->prepareMessage($message->message) ."\n\n"
-                    . '[Перейти к диалогу](' . str_replace('://', '://admin.', config('app.url')) . '/support/dialog/' . $message->user->id . '#read)',
+                'text' => $message,
             ]);
 
         if (! $response['ok']) {
             Log::error($response);
+            Log::error('Message: ' . $message);
         }
     }
 
@@ -44,7 +47,7 @@ class NotifyTelegram
     {
         return str_replace(
             ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'],
-            ['\\_', '\\*', '\\[', '\\]', '\\(', '\\)', '\\~', '\\`', '\\>', '\\#', '\\+', '\\-', '\\=', '\\|', '\\{', '\\}', '\\.', '\\!'],
+            ["\\_", "\\*", "\\[", "\\]", "\\(", "\\)", "\\~", "\\`", "\\>", "\\#", "\\+", "\\-", "\\=", "\\|", "\\{", "\\}", "\\.", "\\!"],
             $message
         );
     }
