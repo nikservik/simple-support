@@ -38,7 +38,9 @@ trait SimpleSupport
         $readNotifications = SupportMessage::where('user_id', $this->id)->whereNotNull('read_at')->where('type', 'notificationRead')->count();
         $notifications = SupportMessage::where('type', 'notification')->where('created_at', '>=', $this->created_at)->count();
 
-        return $unreadMessages + $notifications - $readNotifications;
+        $unread = $unreadMessages + $notifications - $readNotifications;
+
+        return ($unread > 0) ? $unread : 0;
     }
 
     protected function countUnreadFast(): int
