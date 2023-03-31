@@ -2,6 +2,7 @@
 
 namespace Nikservik\SimpleSupport\Tests\Traits;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
 use Nikservik\SimpleSupport\Models\SupportMessage;
 use Nikservik\SimpleSupport\Tests\TestCase;
@@ -87,6 +88,16 @@ class SimpleSupportTest extends TestCase
         $this->assertEquals(0, $user->countUnread);
     }
 
+    public function test_count_unread_without_notifications_created_prior_user_registration()
+    {
+        Config::set('simple-support.unread-count', 'simple');
+        $user = User::factory()->create();
+        SupportMessage::factory()->count(2)->notification()->create(['created_at' => Carbon::now()->subDay()]);
+        SupportMessage::factory()->count(2)->notification()->create();
+
+        $this->assertEquals(2, $user->countUnread);
+    }
+
     public function testCountUnreadFastEmpty()
     {
         Config::set('simple-support.unread-count', 'fast');
@@ -132,5 +143,15 @@ class SimpleSupportTest extends TestCase
         )->create();
 
         $this->assertGreaterThan(0, $user->countUnread);
+    }
+
+    public function test_count_unread_fast_without_notifications_created_prior_user_registration()
+    {
+        Config::set('simple-support.unread-count', 'fast');
+        $user = User::factory()->create();
+        SupportMessage::factory()->count(2)->notification()->create(['created_at' => Carbon::now()->subDay()]);
+        SupportMessage::factory()->count(2)->notification()->create();
+
+        $this->assertEquals(2, $user->countUnread);
     }
 }

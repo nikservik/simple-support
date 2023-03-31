@@ -36,7 +36,7 @@ trait SimpleSupport
     {
         $unreadMessages = $this->supportMessages()->whereNull('support_messages.read_at')->where('support_messages.type', 'supportMessage')->count();
         $readNotifications = SupportMessage::where('user_id', $this->id)->whereNotNull('read_at')->where('type', 'notificationRead')->count();
-        $notifications = SupportMessage::where('type', 'notification')->count();
+        $notifications = SupportMessage::where('type', 'notification')->where('created_at', '>=', $this->created_at)->count();
 
         return $unreadMessages + $notifications - $readNotifications;
     }
@@ -46,7 +46,7 @@ trait SimpleSupport
         $result = DB::table(DB::raw(
             "(SELECT COUNT(id) as `count` FROM support_messages WHERE user_id = {$this->id} AND read_at IS NULL AND type = 'supportMessage') AS `unread_messages`,"
             . "    (SELECT COUNT(id) as `count` FROM support_messages WHERE user_id = {$this->id} AND type = 'notificationRead') AS `read_notifications`,"
-            . "    (SELECT COUNT(id) as `count` FROM support_messages WHERE user_id IS NULL AND type = 'notification') AS `notifications`"
+            . "    (SELECT COUNT(id) as `count` FROM support_messages WHERE user_id IS NULL AND type = 'notification' AND created_at >= '{$this->created_at}') AS `notifications`"
         ))->selectRaw(
             "(`unread_messages`.`count` + `notifications`.`count` - `read_notifications`.`count`) as `count`"
         )->get();
