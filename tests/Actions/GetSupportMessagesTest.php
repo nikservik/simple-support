@@ -28,10 +28,19 @@ class GetSupportMessagesTest extends TestCase
     public function testHandleBefore()
     {
         $user = User::factory()->create();
-        SupportMessage::factory()->count(3)->for($user)->create(['created_at' => Carbon::now()->subMonth()]);
-        SupportMessage::factory()->count(5)->for($user)->create();
+        SupportMessage::factory()->count(3)->for($user)->create(['created_at' => Carbon::now()->addDay()]);
+        SupportMessage::factory()->count(5)->for($user)->create(['created_at' => Carbon::now()->addMonth()]);
 
-        $this->assertCount(3, GetSupportMessages::run($user, Carbon::now()->subDay()));
+        $this->assertCount(3, GetSupportMessages::run($user, Carbon::now()->addMonth()->subDay()));
+    }
+
+    public function test_does_not_show_messages_prior_user_registration()
+    {
+        $user = User::factory()->create();
+        SupportMessage::factory()->count(3)->for($user)->create(['created_at' => Carbon::now()->subDay()]);
+        SupportMessage::factory()->count(5)->for($user)->create(['created_at' => Carbon::now()->addDay()]);
+
+        $this->assertCount(5, GetSupportMessages::run($user));
     }
 
     public function test_user_without_messages()
@@ -58,11 +67,11 @@ class GetSupportMessagesTest extends TestCase
     public function test_messages_before()
     {
         $user = User::factory()->create();
-        SupportMessage::factory()->count(3)->for($user)->create(['created_at' => Carbon::now()->subMonth()]);
-        SupportMessage::factory()->count(5)->for($user)->create();
+        SupportMessage::factory()->count(3)->for($user)->create(['created_at' => Carbon::now()->addDay()]);
+        SupportMessage::factory()->count(5)->for($user)->create(['created_at' => Carbon::now()->addMonth()]);
 
         $this->actingAs($user)
-            ->getJson('/support?before=' . urlencode(Carbon::now()->subDay()))
+            ->getJson('/support?before=' . urlencode(Carbon::now()->addMonth()->subDay()))
             ->assertJsonCount(3, 'data');
     }
 
@@ -198,11 +207,11 @@ class GetSupportMessagesTest extends TestCase
     public function test_get_messages_before_dont_mark_newer_notification_as_read()
     {
         $user = User::factory()->create();
-        SupportMessage::factory()->count(3)->for($user)->create(['created_at' => Carbon::now()->subMonth()]);
-        SupportMessage::factory()->count(2)->notification()->create();
+        SupportMessage::factory()->count(3)->for($user)->create(['created_at' => Carbon::now()->addDay()]);
+        SupportMessage::factory()->count(2)->notification()->create(['created_at' => Carbon::now()->addMonth()]);
 
         $this->actingAs($user)
-            ->getJson('/support?before=' . Carbon::now()->subDay())
+            ->getJson('/support?before=' . Carbon::now()->addDays(2))
             ->assertJsonPath('unread', 2);
     }
 }

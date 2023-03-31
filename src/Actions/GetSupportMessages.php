@@ -98,6 +98,7 @@ class GetSupportMessages
                     );
         })
             ->where('type', '<>', 'notificationRead')
+            ->where('created_at', '>=', $user->created_at)
             ->limit(Config::get('simple-support.messages-per-page'), 10)
             ->orderBy('created_at', 'DESC');
     }
