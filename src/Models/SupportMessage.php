@@ -24,8 +24,10 @@ class SupportMessage extends Model
     protected $fillable = [
         'message', 'type', 'user_id', 'read_at', 'reply_to',
     ];
-    protected $dates = [
-        'created_at', 'updated_at', 'read_at',
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'read_at' => 'datetime',
     ];
 
     public function user(): Relation
