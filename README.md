@@ -87,6 +87,13 @@ SUPPORT_BOT_CHAT=
 ```
 
 ## История изменений
+### 2.05
+- обновлены dev-зависимости для Laravel 9 (`orchestra/testbench ^6.15|^7.0`, `phpunit/phpunit ^9.3|^9.5`)
+- `composer test` закреплён за `vendor/bin/phpunit`
+- тестовый suite привязан к той же MySQL-базе (`users_test`)
+- в `tests/TestCase.php` удалён хардкод `database.default`
+- добавлен `config.audit.ignore` для PKSA-8qx3-n5y5-vvnd и PKSA-w7xr-vk7n-rstm
+
 ### 2.03
 - из выборки исключены сообщения и уведомления, созданные до регистрации пользователя
 

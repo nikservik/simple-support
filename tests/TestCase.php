@@ -31,7 +31,6 @@ class TestCase extends Orchestra
 
     public function getEnvironmentSetUp($app)
     {
-        $app['config']->set('database.default', 'mysql');
         $app['config']->set('app.fallback_locale', 'ru');
         $app['config']->set('simple-support.features', [
             'user-can-send-message',
