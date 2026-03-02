@@ -34,11 +34,13 @@
         </report>
     </coverage>
     <php>
+        <env name="APP_ENV" value="testing"/>
         <env name="DB_CONNECTION" value="mysql"/>
-        <env name="DB_USERNAME" value="root"/>
-        <env name="DB_DATABASE" value="timeplace_test"/>
-        <env name="DB_HOST" value="127.0.0.1" />
-        <env name="DB_PORT" value="3306" />
+        <env name="DB_USERNAME" value="users_test"/>
+        <env name="DB_PASSWORD" value="users_test_pass"/>
+        <env name="DB_DATABASE" value="users_test"/>
+        <env name="DB_HOST" value="localhost"/>
+        <env name="DB_PORT" value="3306"/>
     </php>
     <logging>
         <junit outputFile="build/report.junit.xml"/>
