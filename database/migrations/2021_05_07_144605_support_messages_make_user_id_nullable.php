@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
@@ -32,6 +33,10 @@ class SupportMessagesMakeUserIdNullable extends Migration
      */
     public function down()
     {
+        DB::table('support_messages')
+            ->whereNull('user_id')
+            ->update(['user_id' => 0]);
+
         Schema::table('support_messages', function (Blueprint $table) {
             $table->integer('user_id')->unsigned()->change();
             $table->string('status')->nullable();
@@ -42,15 +47,36 @@ class SupportMessagesMakeUserIdNullable extends Migration
 
     public function tableHasForeign(string $table, string $column): bool
     {
-        $conn = Schema::getConnection()->getDoctrineSchemaManager();
+        $connection = Schema::getConnection();
 
-        $foreigns = array_map(function($key) {
-            return $key->getName();
-        }, $conn->listTableForeignKeys($table));
+        if (method_exists($connection, 'getDoctrineSchemaManager')) {
+            $foreigns = array_map(function ($key) {
+                return $key->getName();
+            }, $connection->getDoctrineSchemaManager()->listTableForeignKeys($table));
 
-        foreach ($foreigns as $foreign) {
-            if (Str::contains($foreign, $column)) {
-                return true;
+            foreach ($foreigns as $foreign) {
+                if (Str::contains($foreign, $column)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        $schema = $connection->getSchemaBuilder();
+
+        if (method_exists($schema, 'getForeignKeys')) {
+            foreach ($schema->getForeignKeys($table) as $foreign) {
+                $name = $foreign['name'] ?? null;
+                $columns = $foreign['columns'] ?? [];
+
+                if (is_string($name) && Str::contains($name, $column)) {
+                    return true;
+                }
+
+                if (is_array($columns) && in_array($column, $columns, true)) {
+                    return true;
+                }
             }
         }
 

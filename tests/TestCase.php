@@ -4,6 +4,7 @@ namespace Nikservik\SimpleSupport\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use Lorisleiva\Actions\ActionServiceProvider;
 use Nikservik\SimpleSupport\SimpleSupportServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
@@ -15,6 +16,9 @@ class TestCase extends Orchestra
     public function setUp(): void
     {
         parent::setUp();
+
+        DB::table('support_messages')->delete();
+        DB::table('users')->delete();
 
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'Nikservik\\SimpleSupport\\Database\\Factories\\'.class_basename($modelName).'Factory'
