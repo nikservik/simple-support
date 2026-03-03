@@ -87,6 +87,10 @@ SUPPORT_BOT_CHAT=
 ```
 
 ## История изменений
+### 2.06
+- dev-зависимости расширены для Laravel 10 (`orchestra/testbench ^8.0`) с сохранением текущих диапазонов
+- `config.audit.ignore` сохранён для PKSA-8qx3-n5y5-vvnd и PKSA-w7xr-vk7n-rstm
+
 ### 2.05
 - обновлены dev-зависимости для Laravel 9 (`orchestra/testbench ^6.15|^7.0`, `phpunit/phpunit ^9.3|^9.5`)
 - `composer test` закреплён за `vendor/bin/phpunit`
